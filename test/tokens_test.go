@@ -6,19 +6,21 @@ import (
 	"net/http"
 	"testing"
 
+	"github.com/joho/godotenv"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
 var (
-	signinPath      = "/signin"
-	refreshPath     = "/refresh"
+	signinPath      = "api/signin"
+	refreshPath     = "api/refresh"
 	userGuidValid   = "ce547c40-acf9-11e6-80f5-76304dec7eb7"
 	userGuidInvalid = "imaguidiswear:)"
 )
 
 // Sends request to /signin, recieves access/refresh tokens if user is correct
 func TestSignin(t *testing.T) {
+	godotenv.Load("../.env")
 	var (
 		m    map[string]any
 		err  error

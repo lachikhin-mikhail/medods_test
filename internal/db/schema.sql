@@ -8,7 +8,8 @@ CREATE TABLE "users" (
 CREATE TABLE "refresh_tokens" (
     "id" INTEGER,
     "user_id" INTEGER NOT NULL,
-    "token" TEXT NOT NULL,
+    "token" TEXT NOT NULL UNIQUE,
+    "is_active" TEXT,
     PRIMARY KEY("id" AUTOINCREMENT),
     FOREIGN KEY("user_id")
     

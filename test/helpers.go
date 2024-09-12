@@ -11,7 +11,7 @@ import (
 )
 
 func getURL(path string) string {
-	port := os.Getenv("TODO_PORT")
+	port := os.Getenv("PORT")
 	return fmt.Sprintf("http://localhost:%s/%s", port, path)
 }
 func request(path string, method string, values map[string]any, cookies ...map[string]string) ([]byte, error) {

@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"crypto/sha256"
 	"log"
 	"os"
 	"time"
@@ -50,13 +51,14 @@ func GenerateRefreshToken(uid string) (string, error) {
 		return "", err
 	}
 
-	tokenHash, err := bcrypt.GenerateFromPassword([]byte(signedToken), bcrypt.DefaultCost)
+	tokenSha256Hash := sha256.Sum256([]byte(signedToken))
+	bcryptHash, err := bcrypt.GenerateFromPassword(tokenSha256Hash[:], bcrypt.DefaultCost)
 	if err != nil {
 		return "", err
 	}
-	tokenHashStr := string(tokenHash)
+	hashStr := string(bcryptHash)
 
-	db.UpdateRefreshToken(uid, tokenHashStr)
+	db.UpdateRefreshToken(uid, hashStr)
 
 	return signedToken, nil
 

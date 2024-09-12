@@ -39,11 +39,22 @@ func PostSigninHandler(w http.ResponseWriter, r *http.Request) {
 	credValid, err := db.VerifyUser(guid)
 	if err != nil {
 		writeErr(err, w)
+		return
 	}
-	if credValid { // change for request to DB to confirm credentials
+	if credValid {
+		access, err := auth.GenerateAccessToken(guid)
+		if err != nil {
+			writeErr(err, w)
+			return
+		}
+		refresh, err := auth.GenerateRefreshToken(guid)
+		if err != nil {
+			writeErr(err, w)
+			return
+		}
 		tokens := map[string]string{
-			"access":  "token", // change to call for token gen
-			"refresh": "token",
+			"access":  access, // change to call for token gen
+			"refresh": refresh,
 		}
 		resp, err := json.Marshal(tokens)
 		if err != nil {
@@ -86,10 +97,12 @@ func PostRefreshHandler(w http.ResponseWriter, r *http.Request) {
 		access, err := auth.GenerateAccessToken(guid)
 		if err != nil {
 			writeErr(err, w)
+			return
 		}
 		refresh, err := auth.GenerateRefreshToken(guid)
 		if err != nil {
 			writeErr(err, w)
+			return
 		}
 		tokens := map[string]string{
 			"access":  access,

@@ -1,16 +1,7 @@
-CREATE TABLE "users" (
-    "id" INTEGER,
-    "username" TEXT NOT NULL,
-    "password" TEXT NOT NULL,
-    PRIMARY KEY ("id" AUTOINCREMENT)
-);
+CREATE DATABASE medods_db;
 
-CREATE TABLE "refresh_tokens" (
-    "id" INTEGER,
-    "user_id" INTEGER NOT NULL,
-    "token" TEXT NOT NULL UNIQUE,
-    "is_active" TEXT,
-    PRIMARY KEY("id" AUTOINCREMENT),
-    FOREIGN KEY("user_id")
-    
-)
+CREATE TABLE users (uid SERIAL PRIMARY KEY);
+
+CREATE TABLE refresh_tokens (id SERIAL PRIMARY KEY, user_id INTEGER NOT NULL REFERENCES users(uid), token TEXT, is_active BOOLEAN NOT NULL);
+
+INSERT INTO users(uid) VALUES (1);

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"net/http"
@@ -9,6 +10,7 @@ import (
 	"github.com/go-chi/chi"
 	"github.com/joho/godotenv"
 	"github.com/lachikhin-mikhail/medods_test/api"
+	"github.com/lachikhin-mikhail/medods_test/internal/db"
 )
 
 func main() {
@@ -16,6 +18,13 @@ func main() {
 	if err != nil {
 		log.Println(err)
 	}
+
+	conn, err := db.ConnectDB()
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	defer conn.Close(context.Background())
 
 	// Адрес для запуска сервера
 	ip := ""

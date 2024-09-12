@@ -14,8 +14,8 @@ import (
 var (
 	signinPath      = "api/signin"
 	refreshPath     = "api/refresh"
-	userGuidValid   = "ce547c40-acf9-11e6-80f5-76304dec7eb7"
-	userGuidInvalid = "imaguidiswear:)"
+	userGuidValid   = "1"
+	userGuidInvalid = 1341396419376418793
 )
 
 // Sends request to /signin, recieves access/refresh tokens if user is correct
@@ -52,8 +52,10 @@ func TestSigninFalseCredentials(t *testing.T) {
 
 	body, err := request(signinPath, http.MethodPost, user)
 	require.NoError(t, err)
+
 	err = json.Unmarshal(body, &m)
 	require.NoError(t, err)
+	assert.NotEmpty(t, m["error"])
 	assert.Empty(t, m["access"])
 	assert.Empty(t, m["refresh"])
 
@@ -73,6 +75,7 @@ func TestRefresh(t *testing.T) {
 	user["guid"] = userGuidValid
 	body, err := request(signinPath, http.MethodPost, user)
 	require.NoError(t, err)
+
 	err = json.Unmarshal(body, &m)
 	require.NoError(t, err)
 	cookie["refresh"] = fmt.Sprintf("%v", m["refresh"])
@@ -98,7 +101,7 @@ func TestRefreshFalseCredentials(t *testing.T) {
 	user = make(map[string]any)
 	cookie = make(map[string]string)
 
-	user["guid"] = userGuidValid
+	user["guid"] = userGuidInvalid
 	body, err := request(signinPath, http.MethodPost, user)
 	require.NoError(t, err)
 	err = json.Unmarshal(body, &m)
@@ -107,10 +110,11 @@ func TestRefreshFalseCredentials(t *testing.T) {
 	cookie["refresh"] = fmt.Sprintf("%v", m["refresh"])
 
 	body, err = request(refreshPath, http.MethodPost, nil, cookie)
-	assert.Error(t, err)
+	require.NoError(t, err)
 
 	err = json.Unmarshal(body, &m)
 	require.NoError(t, err)
+	assert.NotEmpty(t, m["error"])
 	assert.Empty(t, m["access"])
 	assert.Empty(t, m["refresh"])
 }
